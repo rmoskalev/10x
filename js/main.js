@@ -188,6 +188,9 @@ document.addEventListener("DOMContentLoaded", () => {
   if (searchForm) {
     searchForm.addEventListener("submit", (event) => {
       event.preventDefault();
+      if (searchInput) {
+        searchInput.blur();
+      }
     });
   }
 
