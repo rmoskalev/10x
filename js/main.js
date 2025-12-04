@@ -179,9 +179,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const filtersRoot = document.querySelector("[data-filter-root]");
   const searchInput = document.querySelector("[data-search-input]");
   const loadMoreBtn = document.querySelector("[data-load-more]");
+  const searchForm = document.querySelector(".search");
 
   if (!grid || !template || !filtersRoot) {
     return;
+  }
+
+  if (searchForm) {
+    searchForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+    });
   }
 
   const cards = renderCourses(grid, template, coursesData);
