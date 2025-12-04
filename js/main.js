@@ -26,6 +26,20 @@ function getCourseCounts(courses) {
   return counts;
 }
 
+function getCourseCountsForQuery(courses, query) {
+  const normalized = normalize(query);
+
+  if (!normalized) {
+    return getCourseCounts(courses);
+  }
+
+  const matchedCourses = courses.filter((course) =>
+    normalize(course.title).includes(normalized)
+  );
+
+  return getCourseCounts(matchedCourses);
+}
+
 function createCourseCard(course, template) {
   const node = template.content.firstElementChild.cloneNode(true);
 
@@ -152,12 +166,16 @@ function setupFilterHandlers(rootEl, state, deps) {
   });
 }
 
-function setupSearchHandler(inputEl, state, deps) {
+function setupSearchHandler(inputEl, filtersRoot, state, deps) {
   if (!inputEl) return;
 
   const handleInput = debounce((event) => {
     state.query = event.target.value;
     state.visibleCount = state.initialVisible;
+
+    const counts = getCourseCountsForQuery(coursesData, state.query);
+    renderFilters(filtersRoot, FILTERS, counts, state.currentFilter);
+
     updateVisibility(deps);
   }, 300);
 
@@ -214,7 +232,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   setupFilterHandlers(filtersRoot, state, deps);
-  setupSearchHandler(searchInput, state, deps);
+  setupSearchHandler(searchInput, filtersRoot, state, deps);
   setupLoadMoreHandler(loadMoreBtn, state, deps);
 
   updateVisibility(deps);
